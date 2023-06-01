@@ -1,0 +1,12 @@
+.search-field {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+}
+
+.search-field:focus {
+  outline: none;
+  border-color: #007bff;
+}
