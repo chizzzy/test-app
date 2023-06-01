@@ -112,6 +112,10 @@ export const productSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
       })
+      .addCase(deleteProduct.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(deleteProduct.fulfilled, (state, action) => {
         const deletedProductId = action.payload;
         state.products = state.products.filter(

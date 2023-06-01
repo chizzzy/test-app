@@ -48,7 +48,7 @@ export const ProductList: React.FC = () => {
   const sortedProducts = sortProducts(filteredProducts, sortOrder, sortBy);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div className="loader"></div>;
   }
 
   const renderSortButton = (column: string, label: string) => (
