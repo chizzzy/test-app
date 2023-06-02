@@ -78,9 +78,6 @@ export const productSlice = createSlice({
   name: 'products',
   initialState,
   reducers: {
-    addProduct: (state, action: PayloadAction<Product>) => {
-      state.products.push(action.payload);
-    },
     updateProduct: (state, action: PayloadAction<Product>) => {
       const index = state.products.findIndex(
         (product) => product.id === action.payload.id,
@@ -122,8 +119,7 @@ export const productSlice = createSlice({
         state.error = action.payload as string;
       })
       .addCase(addProduct.fulfilled, (state, action) => {
-        state.products.push(action.payload);
-        state.loading = false;
+        state.products = [...state.products, action.payload];
         state.error = null;
       })
       .addCase(addProduct.rejected, (state, action) => {

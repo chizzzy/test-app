@@ -12,3 +12,4 @@ export interface Product {
 }
 
 export type SortOrder = (typeof SORT_ORDERS)[keyof typeof SORT_ORDERS];
+export type Column = keyof Product;
