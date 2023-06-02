@@ -2,7 +2,6 @@ import { Search } from 'components';
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from 'redux/hooks';
 import {
-  Product,
   ProductState,
   deleteProduct,
   fetchProducts,
@@ -10,20 +9,23 @@ import {
 
 import './ProductList.css';
 import { filterProducts, sortProducts } from 'helpers';
-import { SortOrder } from 'types';
+import { SORT_ORDERS } from 'helpers/constants';
+import { Product, SortOrder } from 'types';
+
+type Column = keyof Product;
 
 export const ProductList: React.FC = () => {
   const dispatch = useAppDispatch();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('');
-  const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
+  const [sortOrder, setSortOrder] = useState<SortOrder>(SORT_ORDERS.ASC);
 
   const products = useAppSelector((state: ProductState) => state.products);
   const loading = useAppSelector((state: ProductState) => state.loading);
 
   useEffect(() => {
-    dispatch(fetchProducts() as any);
+    dispatch(fetchProducts());
   }, [dispatch]);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,12 +36,14 @@ export const ProductList: React.FC = () => {
     dispatch(deleteProduct(id));
   };
 
-  const handleSort = (column: string) => {
+  const handleSort = (column: Column) => {
     if (sortBy === column) {
-      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+      setSortOrder(
+        sortOrder === SORT_ORDERS.ASC ? SORT_ORDERS.DESC : SORT_ORDERS.ASC,
+      );
     } else {
       setSortBy(column);
-      setSortOrder('asc');
+      setSortOrder(SORT_ORDERS.ASC);
     }
   };
 
@@ -47,21 +51,23 @@ export const ProductList: React.FC = () => {
 
   const sortedProducts = sortProducts(filteredProducts, sortOrder, sortBy);
 
-  if (loading) {
-    return <div className="loader"></div>;
-  }
-
-  const renderSortButton = (column: string, label: string) => (
+  const renderSortButton = (column: Column, label: string) => (
     <button
       className={`sort-button ${sortBy === column ? 'active' : ''}`}
       onClick={() => handleSort(column)}
     >
       {label}{' '}
       {sortBy === column && (
-        <span className="sort-icon">{sortOrder === 'asc' ? '^' : 'v'}</span>
+        <span className="sort-icon">
+          {sortOrder === SORT_ORDERS.ASC ? '^' : 'v'}
+        </span>
       )}
     </button>
   );
+
+  if (loading) {
+    return <div className="loader" />;
+  }
 
   return (
     <div className="product-list-container">
@@ -74,7 +80,7 @@ export const ProductList: React.FC = () => {
         <table className="product-table">
           <thead>
             <tr>
-              <th>ID</th>
+              <th>{renderSortButton('id', 'ID')}</th>
               <th>{renderSortButton('title', 'Name')}</th>
               <th>{renderSortButton('description', 'Description')}</th>
               <th>{renderSortButton('price', 'Price')}</th>

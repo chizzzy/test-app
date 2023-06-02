@@ -1,8 +1,30 @@
-import { Product } from 'redux/modules/product';
+import { SORT_ORDERS } from './constants';
+import { Product, SortOrder } from 'types';
 
 interface IndexedProduct extends Product {
   [key: string]: any;
 }
+
+export const sortProducts = (
+  products: Product[],
+  sortOrder: SortOrder,
+  sortBy: string,
+) => {
+  return products.sort((a: IndexedProduct, b: IndexedProduct) => {
+    const aValue = a[sortBy];
+    const bValue = b[sortBy];
+
+    if (sortOrder === SORT_ORDERS.ASC) {
+      if (aValue < bValue) return -1;
+      if (aValue > bValue) return 1;
+    } else {
+      if (aValue > bValue) return -1;
+      if (aValue < bValue) return 1;
+    }
+
+    return 0;
+  });
+};
 
 export const filterProducts = (
   products: Product[],
@@ -16,26 +38,5 @@ export const filterProducts = (
       .toLowerCase()
       .includes(searchQuery.toLowerCase());
     return nameMatch || categoryMatch;
-  });
-};
-
-export const sortProducts = (
-  products: Product[],
-  sortOrder: string,
-  sortBy: string,
-) => {
-  return products.sort((a: IndexedProduct, b: IndexedProduct) => {
-    const aValue = a[sortBy];
-    const bValue = b[sortBy];
-
-    if (sortOrder === 'asc') {
-      if (aValue < bValue) return -1;
-      if (aValue > bValue) return 1;
-    } else {
-      if (aValue > bValue) return -1;
-      if (aValue < bValue) return 1;
-    }
-
-    return 0;
   });
 };

@@ -1,22 +1,15 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { Form } from 'pages/AddProductForm/AddProductForm';
-
-export interface Product {
-  id: number;
-  title: string;
-  description: string;
-  price: number;
-  rating: number;
-  stock: number;
-  category: string;
-  thumbnail: string;
-}
+import { Product } from 'types';
 
 export interface ProductState {
   products: Product[];
   loading: boolean;
   error: string | null;
+}
+
+interface AddProductResponse {
+  id: number;
 }
 
 const initialState: ProductState = {
@@ -64,17 +57,17 @@ export const deleteProduct = createAsyncThunk(
 
 export const addProduct = createAsyncThunk(
   'products/addProduct',
-  async (product: Form, thunkAPI) => {
+  async (product: Product, thunkAPI) => {
     try {
-      const newProduct = await axios.post(
+      const response: AddProductResponse = await axios.post(
         `https://dummyjson.com/products/add`,
         {
           headers,
           body: product,
         },
       );
-      console.log(newProduct);
-      return newProduct as any;
+
+      return { ...product, id: response.id };
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
